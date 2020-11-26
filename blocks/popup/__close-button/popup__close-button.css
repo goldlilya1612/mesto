@@ -1,0 +1,25 @@
+.popup__close-button {
+    background: transparent url(../../../images/cross.svg) center center/cover no-repeat;
+    padding: 0;
+    width: 26px;
+    height: 26px;
+    border: none;
+    position: absolute;
+    top: -39.62px;
+    right: 0;
+    transform: rotate(45deg);
+}
+
+.popup__close-button:hover {
+    opacity: 0.6;
+    cursor: pointer;
+}
+
+@media screen and (min-width: 700px) {
+    .popup__close-button {
+        top: -39.62px;
+        right: -40px;
+        width: 40px;
+        height: 40px;
+    }
+}
