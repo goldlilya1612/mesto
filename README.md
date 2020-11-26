@@ -28,4 +28,4 @@
 
 **Сайт**
 
-* [Ссылка на сайт](https://goldlilya1612.github.io/russian-travel/)
+* [Ссылка на сайт](https://goldlilya1612.github.io/mesto/)
