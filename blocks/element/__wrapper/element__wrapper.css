@@ -1,6 +1,7 @@
 .element__wrapper {
     display: flex;
-    flex-direction: row;
     position: relative;
     bottom: 3px;
+    margin-left: 26.12px;
+    justify-content: space-between;
 }
