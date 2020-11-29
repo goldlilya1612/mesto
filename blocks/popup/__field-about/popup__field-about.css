@@ -1,9 +1,0 @@
-.popup__field-about {
-    margin-top: 30px;
-}
-
-@media screen and (min-width: 700px) {
-    .popup__field-about {
-        margin-top: 30px;
-    }
-}

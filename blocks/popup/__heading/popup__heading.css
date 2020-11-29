@@ -6,6 +6,7 @@
     color: #000000;
     display: inline-block;
     margin: 25px 22px 0 22px;
+    margin-bottom: 75px;
 }
 
 @media screen and (min-width: 700px) {
@@ -14,5 +15,6 @@
         line-height: 29px;
         margin-left: 36px;
         align-self: start;
+        margin-bottom: 54px;
     }
 }

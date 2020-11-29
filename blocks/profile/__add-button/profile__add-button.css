@@ -3,7 +3,8 @@
     width: 282px;
     height: 50px;
     margin: 36px auto 0 auto;
-    border: 1px solid #FFF;
+    border: 2px solid #FFF;
+    border-radius: 2px;
 }
 
 .profile__add-button:hover {
