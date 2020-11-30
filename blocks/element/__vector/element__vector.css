@@ -8,3 +8,8 @@
     margin-right: 18.24px;
     padding: 0;
 }
+
+.element__vector:hover {
+    opacity: 0.5;
+    cursor: pointer;
+}
