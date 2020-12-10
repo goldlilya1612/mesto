@@ -47,9 +47,6 @@ const popupPhotoNode = document.querySelector('.popup-photo');
 renderInitialCards();
 bindSaveItemListener();
 
-console.log(popupNode);
-
-
 function handleEditButtonClick() {
     popupNode[0].classList.add('popup_opened');
     fieldNameNode.value = profileNameNode.textContent;
