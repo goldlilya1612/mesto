@@ -149,6 +149,7 @@ function openPhotoPopup(e, item) {
 
     photoPopup.classList.add('popup_opened');
     image.src = elementLink;
+    image.setAttribute("alt", item.name);
     heading.textContent = item.name;
 
 }
