@@ -1,4 +1,5 @@
 .footer__project-name {
+    margin-top: 48px;
     font-size: 14px;
     line-height: 17px;
     color: #545454;
@@ -15,6 +16,7 @@
 
 @media screen and (min-width: 930px) {
     .footer__project-name {
+        margin-top: 66px;
         margin-bottom: 60px;
         max-width: 880px;
         font-size: 18px;

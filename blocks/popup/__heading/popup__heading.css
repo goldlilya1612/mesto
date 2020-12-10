@@ -2,11 +2,8 @@
     font-style: normal;
     font-weight: 900;
     font-size: 18px;
-    line-height: 22px;
     color: #000000;
     display: inline-block;
-    margin: 25px 22px 0 22px;
-    margin-bottom: 75px;
 }
 
 @media screen and (min-width: 700px) {
