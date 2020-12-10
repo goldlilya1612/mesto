@@ -104,7 +104,7 @@ function composeCards(item) {
 
     //картинка
     const photoNode = newCard.querySelector('.element__image');
-    photoNode.addEventListener('click', openPhotoPopup);
+    photoNode.addEventListener('click', e => openPhotoPopup(e, item));
 
     return newCard
 }
@@ -140,7 +140,7 @@ function likeCard(e) {
 }
 
 //открытие фото
-function openPhotoPopup(e) {
+function openPhotoPopup(e, item) {
     const targetElement = e.target;
     const photoPopup = document.querySelector('.popup-photo');
     const image = document.querySelector('.popup-photo__image');
@@ -149,8 +149,7 @@ function openPhotoPopup(e) {
 
     photoPopup.classList.add('popup_opened');
     image.src = elementLink;
-    console.log("работает");
-    //heading.textContent = item.name;
+    heading.textContent = item.name;
 
 }
 
