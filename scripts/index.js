@@ -1,17 +1,18 @@
 const editButtonNode = document.querySelector('.profile__edit-button');
 const addButtonNode = document.querySelector('.profile__add-button');
+const saveButton = document.querySelector('.popup__save-button');
+
 const popupAddFormNode = document.querySelector('.popup_add-form');
 const popupEditFormNode = document.querySelector('.popup_edit-form');
 const popupPhotoNode = document.querySelector('.popup-photo');
 
-
 const popupCloseButtonEditFormNode = document.querySelector('.popup__close-button_edit-form');
 const popupCloseButtonAddFormNode = document.querySelector('.popup__close-button_add-form');
+const popupPhotoCloseButtonNode = document.querySelector('.popup-photo__close-button');
 
 const profileNameNode = document.querySelector('.profile__name');
 const profileTextNode = document.querySelector('.profile__text');
 
-const popupFormNode = document.querySelector('.popup__form_edit-form');
 const fieldNameNode = document.querySelector('.popup__field_name');
 const fieldAboutNode = document.querySelector('.popup__field_about');
 
@@ -44,20 +45,18 @@ const initialCards = [{
 
 const inputNameOfPicture = document.querySelector('.popup__field_name-of-picture');
 const inputLink = document.querySelector('.popup__field_link');
-const saveButton = document.querySelector('.popup__save-button');
 const templateCard = document.querySelector('.template');
-const popupAddForm = document.querySelector('.popup__form_add-form');
+
 
 renderInitialCards();
 
 function handleButtonClick(popup) {
     popup.classList.add('popup_opened');
 
-    fieldNameNode.value = profileNameNode.textContent;
-    fieldAboutNode.value = profileTextNode.textContent;
-
-    inputNameOfPicture.reset();
-    inputLink.reset();
+    if (popup === popupEditFormNode) {
+        fieldNameNode.value = profileNameNode.textContent;
+        fieldAboutNode.value = profileTextNode.textContent;
+    }
 }
 
 function handlePopupCloseButtonClick(popup) {
@@ -68,7 +67,7 @@ function handlePopupFormSubmit(event) {
     event.preventDefault();
     profileNameNode.textContent = fieldNameNode.value;
     profileTextNode.textContent = fieldAboutNode.value;
-    handlePopupCloseButtonEditFormClick();
+    handlePopupCloseButtonClick(popupEditFormNode);
 }
 
 //добавляем 6 карточек в контейнер
@@ -105,11 +104,13 @@ function composeCards(item) {
 //добавляем НОВУЮ карточку
 function addNewCard() {
     event.preventDefault();
-    const NameOfPicture = inputNameOfPicture.value;
+    const nameOfPicture = inputNameOfPicture.value;
     const pictureLink = inputLink.value;
-    const newCardsHTML = composeCards({ name: NameOfPicture, link: pictureLink });
+    const newCardsHTML = composeCards({ name: nameOfPicture, link: pictureLink });
     initialCardsContainer.prepend(newCardsHTML);
-    handlePopupCloseButtonAddFormClick();
+    const popupForm = document.querySelector('.popup__form_add-form')
+    popupForm.reset();
+    handlePopupCloseButtonClick(popupAddFormNode);
 }
 
 //удаление карточки
@@ -136,17 +137,13 @@ function openPhotoPopup(e, item) {
     image.src = elementLink;
     image.setAttribute("alt", item.name);
     heading.textContent = item.name;
-
 }
 
 editButtonNode.addEventListener('click', popup => handleButtonClick(popupEditFormNode));
 addButtonNode.addEventListener('click', popup => handleButtonClick(popupAddFormNode));
-popupPhotoNode.addEventListener('click', popup => handleButtonClick(popupPhotoNode));
-popupCloseButtonEditFormNode.addEventListener('click', handlePopupCloseButtonClick);
-popupCloseButtonAddFormNode.addEventListener('click', handlePopupCloseButtonClick);
-
-popupAddFormNode.addEventListener('click', popup => handlePopupCloseButtonClick(popupAddFormNode));
-popupEditFormNode.addEventListener('click', popup => handlePopupCloseButtonClick(popupEditFormNode));
-popupPhotoNode.addEventListener('click', popup => handlePopupCloseButtonClick(popupPhotoNode));
-popupFormNode.addEventListener('submit', handlePopupFormSubmit);
-popupAddForm.addEventListener('submit', addNewCard);
+popupPhotoNode.addEventListener('click', e => openPhotoPopup(e, item));
+popupPhotoCloseButtonNode.addEventListener('click', popup => handlePopupCloseButtonClick(popupPhotoNode));
+popupCloseButtonEditFormNode.addEventListener('click', popup => handlePopupCloseButtonClick(popupEditFormNode));
+popupCloseButtonAddFormNode.addEventListener('click', popup => handlePopupCloseButtonClick(popupAddFormNode));
+popupEditFormNode.addEventListener('submit', handlePopupFormSubmit);
+popupAddFormNode.addEventListener('submit', addNewCard);
