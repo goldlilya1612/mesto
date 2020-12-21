@@ -1,66 +1,72 @@
-enableValidation()
+const ValidationConfig = {
+    formSelector: '.popup__form',
+    inputSelector: '.popup__field',
+    submitButtonSelector: '.popup__button',
+    inactiveButtonClass: 'popup__button_invalid',
+    inputErrorClass: 'popup__field_invalid',
+    errorClass: 'error'
+};
+
+enableValidation(ValidationConfig);
 
 // отображение ошибки
-function showError(form, input) {
+function showError(form, input, config) {
     const error = form.querySelector(`#${input.id}-error`);
     error.textContent = input.validationMessage;
-    input.classList.add('popup__field_invalid');
+    input.classList.add(config.inputErrorClass);
 }
 
 // скрытие ошибки
-function hideError(form, input) {
+function hideError(form, input, config) {
     const error = form.querySelector(`#${input.id}-error`);
     error.textContent = "";
-    input.classList.remove('popup__field_invalid');
+    input.classList.remove(config.inputErrorClass);
 }
 
 //проверка валидности
-function checkInputValidity(form, input) {
+function checkInputValidity(form, input, config) {
     if (input.validity.valid) {
-        hideError(form, input);
+        hideError(form, input, config);
     } else {
-        showError(form, input);
+        showError(form, input, config);
     }
 }
 
 //блокировка-разблокировка кнопки
-function setButtonState(button, isActive) {
+function setButtonState(button, isActive, config) {
     if (isActive) {
-        button.classList.remove('popup__save-button_invalid')
+        button.classList.remove(config.inactiveButtonClass)
         button.disabled = false;
     } else {
-        button.classList.add('popup__save-button_invalid')
+        button.classList.add(config.inactiveButtonClass)
         button.disabled = true;
     }
 }
 
 
-function setEventListener(form) {
-    const inputList = form.querySelectorAll('.popup__field');
-    const ButtonNode = form.querySelector('.popup_button');
+function setEventListener(form, config) {
+    const inputList = form.querySelectorAll(config.inputSelector);
+    const ButtonNode = form.querySelector(config.submitButtonSelector);
 
     inputList.forEach(input => {
         input.addEventListener('input', (evt) => {
-            checkInputValidity(form, input);
-            setButtonState(ButtonNode, form.checkValidity());
+            checkInputValidity(form, input, config);
+            setButtonState(ButtonNode, form.checkValidity(), config);
         })
     })
 }
 
 //поиск нужной формы и кнопки
-function enableValidation() {
-    const forms = document.querySelectorAll('.popup__form');
+function enableValidation(config) {
+    const forms = document.querySelectorAll(config.formSelector);
     forms.forEach(form => {
-        setEventListener(form);
+        setEventListener(form, config);
 
         form.addEventListener('submit', evt => {
             evt.preventDefault();
         })
 
-        const ButtonNode = form.querySelector('.popup_button');
-        setButtonState(ButtonNode, form.checkValidity());
+        const ButtonNode = form.querySelector(config.submitButtonSelector);
+        setButtonState(ButtonNode, form.checkValidity(), config);
     });
 }
-
-//TODO: при первом открытии форма не валидная
-//TODO: закрытие через оверлей

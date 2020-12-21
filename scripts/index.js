@@ -1,14 +1,15 @@
-const popupAddFormOverlay = document.querySelector('.popup_add-form');
-const popupEditFormOverlay = document.querySelector('.popup_edit-form');
-const popupPhotoOverlay = document.querySelector('.popup-photo');
-
 const editButtonNode = document.querySelector('.profile__edit-button');
 const addButtonNode = document.querySelector('.profile__add-button');
 const saveButton = document.querySelector('.popup__save-button');
+const createButton = document.querySelector('.popup__create-button');
 
-const popupAddFormNode = document.querySelector('.popup_add-form');
-const popupEditFormNode = document.querySelector('.popup_edit-form');
+
+const popupAddNode = document.querySelector('.popup_add-form');
+const popupEditNode = document.querySelector('.popup_edit-form');
 const popupPhotoNode = document.querySelector('.popup-photo');
+
+const popupAddFormNode = document.querySelector('.popup__form_add-form');
+const popupEditFormNode = document.querySelector('.popup__form_edit-form');
 
 const popupCloseButtonEditFormNode = document.querySelector('.popup__close-button_edit-form');
 const popupCloseButtonAddFormNode = document.querySelector('.popup__close-button_add-form');
@@ -54,13 +55,27 @@ const templateCard = document.querySelector('.template');
 
 renderInitialCards();
 
-function handleButtonClick(popup) {
+function handleButtonClick(popup, config, form, button) {
     popup.classList.add('popup_opened');
 
-    if (popup === popupEditFormNode) {
+    if (popup === popupEditNode) {
+
         fieldNameNode.value = profileNameNode.textContent;
         fieldAboutNode.value = profileTextNode.textContent;
     }
+
+    setButtonState(button, form.checkValidity(), config);
+
+    //чтобы при новом открытии попапа сбрасывались стили, характерные невалидным полям
+    const inputList = form.querySelectorAll(config.inputSelector);
+    inputList.forEach(input => {
+        if (input.validity.valid) {
+            const error = document.querySelector(`#${input.id}-error`);
+            error.textContent = "";
+            input.classList.remove(config.inputErrorClass);
+        }
+    });
+
 }
 
 function popupClose(popup) {
@@ -71,7 +86,7 @@ function handlePopupFormSubmit(event) {
     event.preventDefault();
     profileNameNode.textContent = fieldNameNode.value;
     profileTextNode.textContent = fieldAboutNode.value;
-    popupClose(popupEditFormNode);
+    popupClose(popupEditNode);
 }
 
 //добавляем 6 карточек в контейнер
@@ -114,7 +129,7 @@ function addNewCard() {
     initialCardsContainer.prepend(newCardsHTML);
     const popupForm = document.querySelector('.popup__form_add-form')
     popupForm.reset();
-    popupClose(popupAddFormNode);
+    popupClose(popupAddNode);
 }
 
 //удаление карточки
@@ -143,21 +158,26 @@ function openPhotoPopup(e, item) {
     heading.textContent = item.name;
 }
 
-editButtonNode.addEventListener('click', popup => handleButtonClick(popupEditFormNode));
-addButtonNode.addEventListener('click', popup => handleButtonClick(popupAddFormNode));
+editButtonNode.addEventListener('click', (popup, config, form, button) => handleButtonClick(popupEditNode, ValidationConfig, popupEditFormNode, saveButton));
+addButtonNode.addEventListener('click', (popup, config, form, button) => handleButtonClick(popupAddNode, ValidationConfig, popupAddFormNode, createButton));
 popupPhotoNode.addEventListener('click', e => openPhotoPopup(e, item));
 popupPhotoCloseButtonNode.addEventListener('click', popup => popupClose(popupPhotoNode));
-popupCloseButtonEditFormNode.addEventListener('click', popup => popupClose(popupEditFormNode));
-popupCloseButtonAddFormNode.addEventListener('click', popup => popupClose(popupAddFormNode));
-popupEditFormNode.addEventListener('submit', handlePopupFormSubmit);
-popupAddFormNode.addEventListener('submit', addNewCard);
-popupAddFormOverlay.addEventListener('click', popup => popupClose(popupAddFormNode));
-popupEditFormOverlay.addEventListener('click', popup => popupClose(popupEditFormNode));
-popupPhotoOverlay.addEventListener('click', popup => popupClose(popupPhotoNode));
+popupCloseButtonEditFormNode.addEventListener('click', popup => popupClose(popupEditNode));
+popupCloseButtonAddFormNode.addEventListener('click', popup => popupClose(popupAddNode));
+popupEditNode.addEventListener('submit', handlePopupFormSubmit);
+popupAddNode.addEventListener('submit', addNewCard);
+
+
+// Закрытие по оверлею
+document.addEventListener('mousedown', function(evt) {
+    if (evt.target === popupPhotoNode || popupEditNode || popupAddNode) {
+        popupClose(evt.target);
+    }
+})
 
 // Закрытие на кнопку esc
 document.addEventListener('keydown', e => {
     if (e.keyCode == 27) {
-        popupClose(popupAddFormNode) || popupClose(popupEditFormNode) || popupClose(popupPhotoNode);
+        popupClose(popupAddNode) || popupClose(popupEditNode) || popupClose(popupPhotoNode);
     }
 })
