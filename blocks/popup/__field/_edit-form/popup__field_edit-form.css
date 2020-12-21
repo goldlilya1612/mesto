@@ -1,7 +1,3 @@
-.popup__field_edit-form {
-    margin-bottom: 30px;
-}
-
 @media screen and (max-width: 699px) {
     .popup__field_edit-form {
         width: 238px;

@@ -1,3 +1,7 @@
+const popupAddFormOverlay = document.querySelector('.popup_add-form');
+const popupEditFormOverlay = document.querySelector('.popup_edit-form');
+const popupPhotoOverlay = document.querySelector('.popup-photo');
+
 const editButtonNode = document.querySelector('.profile__edit-button');
 const addButtonNode = document.querySelector('.profile__add-button');
 const saveButton = document.querySelector('.popup__save-button');
@@ -59,7 +63,7 @@ function handleButtonClick(popup) {
     }
 }
 
-function handlePopupCloseButtonClick(popup) {
+function popupClose(popup) {
     popup.classList.remove('popup_opened');
 }
 
@@ -67,7 +71,7 @@ function handlePopupFormSubmit(event) {
     event.preventDefault();
     profileNameNode.textContent = fieldNameNode.value;
     profileTextNode.textContent = fieldAboutNode.value;
-    handlePopupCloseButtonClick(popupEditFormNode);
+    popupClose(popupEditFormNode);
 }
 
 //добавляем 6 карточек в контейнер
@@ -110,7 +114,7 @@ function addNewCard() {
     initialCardsContainer.prepend(newCardsHTML);
     const popupForm = document.querySelector('.popup__form_add-form')
     popupForm.reset();
-    handlePopupCloseButtonClick(popupAddFormNode);
+    popupClose(popupAddFormNode);
 }
 
 //удаление карточки
@@ -142,8 +146,18 @@ function openPhotoPopup(e, item) {
 editButtonNode.addEventListener('click', popup => handleButtonClick(popupEditFormNode));
 addButtonNode.addEventListener('click', popup => handleButtonClick(popupAddFormNode));
 popupPhotoNode.addEventListener('click', e => openPhotoPopup(e, item));
-popupPhotoCloseButtonNode.addEventListener('click', popup => handlePopupCloseButtonClick(popupPhotoNode));
-popupCloseButtonEditFormNode.addEventListener('click', popup => handlePopupCloseButtonClick(popupEditFormNode));
-popupCloseButtonAddFormNode.addEventListener('click', popup => handlePopupCloseButtonClick(popupAddFormNode));
+popupPhotoCloseButtonNode.addEventListener('click', popup => popupClose(popupPhotoNode));
+popupCloseButtonEditFormNode.addEventListener('click', popup => popupClose(popupEditFormNode));
+popupCloseButtonAddFormNode.addEventListener('click', popup => popupClose(popupAddFormNode));
 popupEditFormNode.addEventListener('submit', handlePopupFormSubmit);
 popupAddFormNode.addEventListener('submit', addNewCard);
+popupAddFormOverlay.addEventListener('click', popup => popupClose(popupAddFormNode));
+popupEditFormOverlay.addEventListener('click', popup => popupClose(popupEditFormNode));
+popupPhotoOverlay.addEventListener('click', popup => popupClose(popupPhotoNode));
+
+// Закрытие на кнопку esc
+document.addEventListener('keydown', e => {
+    if (e.keyCode == 27) {
+        popupClose(popupAddFormNode) || popupClose(popupEditFormNode) || popupClose(popupPhotoNode);
+    }
+})

@@ -41,3 +41,9 @@
 @import url(../blocks/popup-photo/__image/popup-photo__image.css);
 @import url(../blocks/popup-photo/__heading/popup-photo__heading.css);
 @import url(../blocks/popup-photo/__close-button/popup-photo__close-button.css);
+
+/*Валидация*/
+
+@import url(../blocks/popup/__field/_invalid/popup__field_invalid.css);
+@import url(../blocks/error/error.css);
+@import url(../blocks/popup/__save-button/_invalid/popup__save-button_invalid.css);
