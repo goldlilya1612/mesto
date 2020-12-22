@@ -62,26 +62,10 @@ renderInitialCards();
 
 
 //открытие попапа
-function openPopup(popup, button, form, config) {
+function openPopup(popup) {
     popup.classList.add('popup_opened');
     popup.addEventListener('click', closeByOvelay);
     document.addEventListener('keydown', closeByEscape);
-
-    if (popup === popupEditNode) {
-
-        fieldNameNode.value = profileNameNode.textContent;
-        fieldAboutNode.value = profileTextNode.textContent;
-        setButtonState(button, form.checkValidity(), config);
-        removeError(form, config);
-    }
-
-    if (popup === popupAddNode) {
-
-        resetInput(popup, config);
-        setButtonState(button, form.checkValidity(), config);
-        removeError(form, config);
-    }
-
 }
 
 //очистка инпутов
@@ -114,7 +98,7 @@ function handlePopupFormSubmit(event) {
     event.preventDefault();
     profileNameNode.textContent = fieldNameNode.value;
     profileTextNode.textContent = fieldAboutNode.value;
-    popupClose(popupEditNode);
+    closePopup(popupEditNode);
 }
 
 //добавляем 6 карточек в контейнер
@@ -195,8 +179,19 @@ function closeByEscape(evt) {
     }
 }
 
-editButtonNode.addEventListener('click', () => openPopup(popupEditNode, saveButton, popupEditFormNode, validationConfig));
-addButtonNode.addEventListener('click', () => openPopup(popupAddNode, createButton, popupAddFormNode, validationConfig));
+editButtonNode.addEventListener('click', () => {
+    openPopup(popupEditNode)
+    fieldNameNode.value = profileNameNode.textContent;
+    fieldAboutNode.value = profileTextNode.textContent;
+    setButtonState(saveButton, popupEditFormNode.checkValidity(), validationConfig);
+    removeError(popupEditFormNode, validationConfig);
+});
+addButtonNode.addEventListener('click', () => {
+    openPopup(popupAddNode)
+    resetInput(popupAddNode, validationConfig);
+    setButtonState(createButton, popupAddFormNode.checkValidity(), validationConfig);
+    removeError(popupAddFormNode, validationConfig);
+});
 popupPhotoCloseButtonNode.addEventListener('click', () => closePopup(popupPhotoNode));
 popupCloseButtonEditFormNode.addEventListener('click', () => closePopup(popupEditNode));
 popupCloseButtonAddFormNode.addEventListener('click', () => closePopup(popupAddNode));
