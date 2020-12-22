@@ -1,4 +1,4 @@
-const ValidationConfig = {
+const validationConfig = {
     formSelector: '.popup__form',
     inputSelector: '.popup__field',
     submitButtonSelector: '.popup__button',
@@ -6,8 +6,6 @@ const ValidationConfig = {
     inputErrorClass: 'popup__field_invalid',
     errorClass: 'error'
 };
-
-enableValidation(ValidationConfig);
 
 // отображение ошибки
 function showError(form, input, config) {
@@ -46,12 +44,12 @@ function setButtonState(button, isActive, config) {
 
 function setEventListener(form, config) {
     const inputList = form.querySelectorAll(config.inputSelector);
-    const ButtonNode = form.querySelector(config.submitButtonSelector);
+    const buttonNode = form.querySelector(config.submitButtonSelector);
 
     inputList.forEach(input => {
         input.addEventListener('input', (evt) => {
             checkInputValidity(form, input, config);
-            setButtonState(ButtonNode, form.checkValidity(), config);
+            setButtonState(buttonNode, form.checkValidity(), config);
         })
     })
 }
@@ -66,7 +64,9 @@ function enableValidation(config) {
             evt.preventDefault();
         })
 
-        const ButtonNode = form.querySelector(config.submitButtonSelector);
-        setButtonState(ButtonNode, form.checkValidity(), config);
+        const buttonNode = form.querySelector(config.submitButtonSelector);
+        setButtonState(buttonNode, form.checkValidity(), config);
     });
 }
+
+enableValidation(validationConfig);

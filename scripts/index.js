@@ -1,3 +1,8 @@
+const heading = document.querySelector('.popup-photo__heading');
+const image = document.querySelector('.popup-photo__image');
+
+const photoList = document.querySelector('.element__image');
+
 const editButtonNode = document.querySelector('.profile__edit-button');
 const addButtonNode = document.querySelector('.profile__add-button');
 const saveButton = document.querySelector('.popup__save-button');
@@ -55,31 +60,54 @@ const templateCard = document.querySelector('.template');
 
 renderInitialCards();
 
-function handleButtonClick(popup, config, form, button) {
+
+//открытие попапа
+function openPopup(popup, button, form, config) {
     popup.classList.add('popup_opened');
+    popup.addEventListener('click', closeByOvelay);
+    document.addEventListener('keydown', closeByEscape);
 
     if (popup === popupEditNode) {
 
         fieldNameNode.value = profileNameNode.textContent;
         fieldAboutNode.value = profileTextNode.textContent;
+        setButtonState(button, form.checkValidity(), config);
+        removeError(form, config);
     }
 
-    setButtonState(button, form.checkValidity(), config);
+    if (popup === popupAddNode) {
 
-    //чтобы при новом открытии попапа сбрасывались стили, характерные невалидным полям
-    const inputList = form.querySelectorAll(config.inputSelector);
-    inputList.forEach(input => {
-        if (input.validity.valid) {
-            const error = document.querySelector(`#${input.id}-error`);
-            error.textContent = "";
-            input.classList.remove(config.inputErrorClass);
-        }
-    });
+        resetInput(popup, config);
+        setButtonState(button, form.checkValidity(), config);
+        removeError(form, config);
+    }
 
 }
 
-function popupClose(popup) {
+//очистка инпутов
+function resetInput(popup, config) {
+    const inputs = popup.querySelectorAll(config.inputSelector);
+    inputs.forEach(input => {
+        input.value = "";
+    });
+}
+
+
+//удаления сообщения об ошибке
+function removeError(form, config) {
+    const inputList = form.querySelectorAll(config.inputSelector);
+    inputList.forEach(input => {
+        const error = document.querySelector(`#${input.id}-error`);
+        error.textContent = "";
+        input.classList.remove(config.inputErrorClass);
+    });
+}
+
+//закрытие попапа
+function closePopup(popup) {
     popup.classList.remove('popup_opened');
+    popup.removeEventListener('click', closeByOvelay);
+    document.removeEventListener('keydown', closeByEscape);
 }
 
 function handlePopupFormSubmit(event) {
@@ -114,22 +142,19 @@ function composeCards(item) {
     likeNode.addEventListener('click', likeCard);
 
     //картинка
-    const photoNode = newCard.querySelector('.element__image');
-    photoNode.addEventListener('click', e => openPhotoPopup(e, item));
+    cardImage.addEventListener('click', () => openPhotoPopup(item));
 
     return newCard
 }
 
 //добавляем НОВУЮ карточку
-function addNewCard() {
+function addNewCard(event) {
     event.preventDefault();
     const nameOfPicture = inputNameOfPicture.value;
     const pictureLink = inputLink.value;
     const newCardsHTML = composeCards({ name: nameOfPicture, link: pictureLink });
     initialCardsContainer.prepend(newCardsHTML);
-    const popupForm = document.querySelector('.popup__form_add-form')
-    popupForm.reset();
-    popupClose(popupAddNode);
+    closePopup(popupAddNode);
 }
 
 //удаление карточки
@@ -146,38 +171,34 @@ function likeCard(e) {
 }
 
 //открытие фото
-function openPhotoPopup(e, item) {
-    const targetElement = e.target;
-    const image = document.querySelector('.popup-photo__image');
-    const heading = document.querySelector('.popup-photo__heading');
-    const elementLink = targetElement.getAttribute('src');
-
-    popupPhotoNode.classList.add('popup_opened');
-    image.src = elementLink;
+function openPhotoPopup(item) {
+    openPopup(popupPhotoNode);
+    image.src = item.link;
     image.setAttribute("alt", item.name);
     heading.textContent = item.name;
 }
 
-editButtonNode.addEventListener('click', (popup, config, form, button) => handleButtonClick(popupEditNode, ValidationConfig, popupEditFormNode, saveButton));
-addButtonNode.addEventListener('click', (popup, config, form, button) => handleButtonClick(popupAddNode, ValidationConfig, popupAddFormNode, createButton));
-popupPhotoNode.addEventListener('click', e => openPhotoPopup(e, item));
-popupPhotoCloseButtonNode.addEventListener('click', popup => popupClose(popupPhotoNode));
-popupCloseButtonEditFormNode.addEventListener('click', popup => popupClose(popupEditNode));
-popupCloseButtonAddFormNode.addEventListener('click', popup => popupClose(popupAddNode));
-popupEditNode.addEventListener('submit', handlePopupFormSubmit);
-popupAddNode.addEventListener('submit', addNewCard);
-
-
 // Закрытие по оверлею
-document.addEventListener('mousedown', function(evt) {
-    if (evt.target === popupPhotoNode || popupEditNode || popupAddNode) {
-        popupClose(evt.target);
+function closeByOvelay(evt) {
+    if (evt.target.classList.contains('popup_opened')) {
+        closePopup(evt.target);
     }
-})
+}
+
 
 // Закрытие на кнопку esc
-document.addEventListener('keydown', e => {
-    if (e.keyCode == 27) {
-        popupClose(popupAddNode) || popupClose(popupEditNode) || popupClose(popupPhotoNode);
+function closeByEscape(evt) {
+    const escapeCode = 27
+    if (evt.keyCode === escapeCode) {
+        const openedPopup = document.querySelector('.popup_opened')
+        closePopup(openedPopup);
     }
-})
+}
+
+editButtonNode.addEventListener('click', () => openPopup(popupEditNode, saveButton, popupEditFormNode, validationConfig));
+addButtonNode.addEventListener('click', () => openPopup(popupAddNode, createButton, popupAddFormNode, validationConfig));
+popupPhotoCloseButtonNode.addEventListener('click', () => closePopup(popupPhotoNode));
+popupCloseButtonEditFormNode.addEventListener('click', () => closePopup(popupEditNode));
+popupCloseButtonAddFormNode.addEventListener('click', () => closePopup(popupAddNode));
+popupEditNode.addEventListener('submit', handlePopupFormSubmit);
+popupAddNode.addEventListener('submit', addNewCard);
