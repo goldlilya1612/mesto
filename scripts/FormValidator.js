@@ -1,5 +1,3 @@
-import { hideError, showError } from './validate.js'
-
 export default class FormValidator {
     constructor(form, config) {
         this._formSelector = config.formSelector;
@@ -19,6 +17,7 @@ export default class FormValidator {
     _setEventListeners() {
         const inputList = this._form.querySelectorAll(this._inputSelector);
         const buttonNode = this._form.querySelector(this._submitButtonSelector);
+        const forms = document.querySelectorAll(this._formSelector);
 
         inputList.forEach(input => {
             input.addEventListener('input', () => {
@@ -26,15 +25,35 @@ export default class FormValidator {
                 this.setButtonState(buttonNode, this._form.checkValidity());
             })
         });
+
+        forms.forEach(form => {
+            form.addEventListener('submit', evt => {
+                evt.preventDefault();
+            });
+        });
     }
 
     //проверка валидности полей
     _checkInputValidity(form, input, config) {
         if (input.validity.valid) {
-            hideError(form, input, config);
+            this._hideError(form, input, config);
         } else {
-            showError(form, input, config);
+            this._showError(form, input, config);
         }
+    }
+
+    // отображение ошибки
+    _showError(form, input, config) {
+        const error = form.querySelector(`#${input.id}-error`);
+        error.textContent = input.validationMessage;
+        input.classList.add(config.inputErrorClass);
+    }
+
+    // скрытие ошибки
+    _hideError(form, input, config) {
+        const error = form.querySelector(`#${input.id}-error`);
+        error.textContent = "";
+        input.classList.remove(config.inputErrorClass);
     }
 
     //блокировка-разблокировка кнопки
@@ -46,6 +65,13 @@ export default class FormValidator {
             button.classList.add(this._inactiveButtonClass);
             button.disabled = true;
         }
+    }
+
+    removeError(formElement, form, config) {
+        const inputList = formElement.querySelectorAll(config.inputSelector);
+        inputList.forEach(input => {
+            form._hideError(formElement, input, config);
+        });
     }
 
 }

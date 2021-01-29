@@ -1,15 +1,16 @@
- import { openPopup, popupPhotoNode } from './index.js';
+ import { openPopup, popupPhotoNode } from './util.js';
  export default class Card {
 
-     constructor(data) {
+     constructor(data, selector) {
          this._name = data.name;
          this._link = data.link;
+         this._selector = selector;
      };
 
      //Возвращаем разметку
      _getTemplate() {
          const cardElement = document
-             .querySelector('.template')
+             .querySelector(this._selector)
              .content.querySelector('.element')
              .cloneNode(true);
 
@@ -17,7 +18,7 @@
      };
 
      _setEventListeners() {
-         this._element.querySelector('.element__remove-button').addEventListener('click', this._removeCard);
+         this._element.querySelector('.element__remove-button').addEventListener('click', this._removeCard.bind(this));
          this._element.querySelector('.element__vector').addEventListener('click', this._likeCard);
          this._element.querySelector('.element__image').addEventListener('click', () => this._openPhotoPopup());
      };
@@ -25,24 +26,22 @@
      //Добавление в разметку данные
      generateCard() {
          this._element = this._getTemplate();
+         const image = this._element.querySelector('.element__image');
+
          this._setEventListeners();
 
          this._element.querySelector('.element__text').textContent = this._name;
-         this._element.querySelector('.element__image').src = this._link;
-         this._element.querySelector('.element__image').setAttribute("alt", this._name);
+         image.src = this._link;
+         image.setAttribute("alt", this._name);
 
          return this._element;
      };
 
      //Удаление карточки
-     _removeCard(e) {
-         const targetElement = e.target;
-         const targetCard = targetElement.closest('.element');
-         targetCard.remove();
-         console.log(this);
-         this._element = this._getTemplate();
-         this._removeEventListeners();
-     };
+     _removeCard() {
+         this._element.remove();
+         this._element = null; // занулляем элемент, чтобы сборщик мусора почистил все с ним связанное
+     }
 
      //Лайк карточки
      _likeCard(e) {
@@ -59,6 +58,4 @@
          image.setAttribute("alt", this._name);
          heading.textContent = this._name;
      }
-
-     _
  }

@@ -1,6 +1,7 @@
 import Card from './Card.js';
 import FormValidator from './FormValidator.js';
 import { validationConfig } from './validate.js';
+import { openPopup, closePopup, popupPhotoNode } from './util.js';
 
 const initialCardsContainer = document.querySelector('.elements');
 const initialCards = [{
@@ -36,7 +37,6 @@ const createButton = document.querySelector('.popup__create-button');
 
 const popupAddNode = document.querySelector('.popup_add-form');
 const popupEditNode = document.querySelector('.popup_edit-form');
-export const popupPhotoNode = document.querySelector('.popup-photo');
 
 const popupCloseButtonEditFormNode = document.querySelector('.popup__close-button_edit-form');
 const popupCloseButtonAddFormNode = document.querySelector('.popup__close-button_add-form');
@@ -52,53 +52,31 @@ const fieldAboutNode = document.querySelector('.popup__field_about');
 const inputNameOfPicture = document.querySelector('.popup__field_name-of-picture');
 const inputLink = document.querySelector('.popup__field_link');
 
+const forms = document.querySelectorAll(validationConfig.formSelector);
+
+const editForm = new FormValidator(forms[0], validationConfig);
+const addForm = new FormValidator(forms[1], validationConfig);
 
 //Добавление первых 6 карточек
 initialCards.forEach(item => {
-    const card = new Card(item);
+    initialCardsContainer.append(createCard(item));
+})
+
+//создание карточки
+function createCard(item) {
+    const card = new Card(item, '.template');
     const cardElement = card.generateCard();
-    initialCardsContainer.append(cardElement);
-})
+    return cardElement
+}
 
-
-//проверка валидности формы
-const forms = document.querySelectorAll(validationConfig.formSelector);
-forms.forEach(formItem => {
-    const form = new FormValidator(formItem, validationConfig);
-    form.enableValidation();
-})
+//проверка валидности форм
+editForm.enableValidation();
+addForm.enableValidation();
 
 
 //очистка инпутов
-function resetInput(popup, config) {
-    const inputs = popup.querySelectorAll(config.inputSelector);
-    inputs.forEach(input => {
-        input.value = "";
-    });
-}
-
-//удаления сообщения об ошибке
-function removeError(form, config) {
-    const inputList = form.querySelectorAll(config.inputSelector);
-    inputList.forEach(input => {
-        const error = document.querySelector(`#${input.id}-error`);
-        error.textContent = "";
-        input.classList.remove(config.inputErrorClass);
-    });
-}
-
-//открытие попапа
-export function openPopup(popup) {
-    popup.classList.add('popup_opened');
-    popup.addEventListener('click', closeByOvelay);
-    document.addEventListener('keydown', closeByEscape);
-}
-
-//закрытие попапа
-function closePopup(popup) {
-    popup.classList.remove('popup_opened');
-    popup.removeEventListener('click', closeByOvelay);
-    document.removeEventListener('keydown', closeByEscape);
+function resetInput(form) {
+    form.reset();
 }
 
 function handlePopupFormSubmit(event) {
@@ -113,45 +91,23 @@ function addNewCard(event) {
     event.preventDefault();
     const nameOfPicture = inputNameOfPicture.value;
     const pictureLink = inputLink.value;
-    const card = new Card({ name: nameOfPicture, link: pictureLink });
-    const newCardsHTML = card.generateCard();
-    initialCardsContainer.prepend(newCardsHTML);
+    initialCardsContainer.prepend(createCard({ name: nameOfPicture, link: pictureLink }));
     closePopup(popupAddNode);
-}
-
-
-// Закрытие по оверлею
-function closeByOvelay(evt) {
-    if (evt.target.classList.contains('popup_opened')) {
-        closePopup(evt.target);
-    }
-}
-
-
-// Закрытие на кнопку esc
-function closeByEscape(evt) {
-    const escapeCode = 27
-    if (evt.keyCode === escapeCode) {
-        const openedPopup = document.querySelector('.popup_opened')
-        closePopup(openedPopup);
-    }
 }
 
 editButtonNode.addEventListener('click', () => {
     openPopup(popupEditNode)
     fieldNameNode.value = profileNameNode.textContent;
     fieldAboutNode.value = profileTextNode.textContent;
-    const form = new FormValidator(forms[0], validationConfig);
-    form.setButtonState(saveButton, forms[0].checkValidity());
-    removeError(forms[0], validationConfig);
+    editForm.setButtonState(saveButton, forms[0].checkValidity());
+    editForm.removeError(forms[0], editForm, validationConfig);
 });
 
 addButtonNode.addEventListener('click', () => {
     openPopup(popupAddNode)
-    resetInput(popupAddNode, validationConfig);
-    const form = new FormValidator(forms[1], validationConfig);
-    form.setButtonState(createButton, forms[1].checkValidity());
-    removeError(forms[1], validationConfig);
+    resetInput(forms[1]);
+    addForm.setButtonState(createButton, forms[1].checkValidity());
+    addForm.removeError(forms[1], addForm, validationConfig);
 });
 popupPhotoCloseButtonNode.addEventListener('click', () => closePopup(popupPhotoNode));
 popupCloseButtonEditFormNode.addEventListener('click', () => closePopup(popupEditNode));
