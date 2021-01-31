@@ -1,4 +1,6 @@
 export const popupPhotoNode = document.querySelector('.popup-photo');
+export const image = document.querySelector('.popup-photo__image');
+export const heading = document.querySelector('.popup-photo__heading');
 
 //открытие попапа
 export function openPopup(popup) {

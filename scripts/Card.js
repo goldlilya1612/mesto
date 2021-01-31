@@ -1,4 +1,4 @@
- import { openPopup, popupPhotoNode } from './util.js';
+ import { openPopup, popupPhotoNode, image, heading } from './util.js';
  export default class Card {
 
      constructor(data, selector) {
@@ -51,8 +51,6 @@
 
      //Открытие попапа с картинкой
      _openPhotoPopup() {
-         const image = document.querySelector('.popup-photo__image');
-         const heading = document.querySelector('.popup-photo__heading');
          openPopup(popupPhotoNode);
          image.src = this._link;
          image.setAttribute("alt", this._name);

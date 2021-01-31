@@ -17,7 +17,6 @@ export default class FormValidator {
     _setEventListeners() {
         const inputList = this._form.querySelectorAll(this._inputSelector);
         const buttonNode = this._form.querySelector(this._submitButtonSelector);
-        const forms = document.querySelectorAll(this._formSelector);
 
         inputList.forEach(input => {
             input.addEventListener('input', () => {
@@ -26,10 +25,8 @@ export default class FormValidator {
             })
         });
 
-        forms.forEach(form => {
-            form.addEventListener('submit', evt => {
-                evt.preventDefault();
-            });
+        this._form.addEventListener('submit', evt => {
+            evt.preventDefault();
         });
     }
 

@@ -38,6 +38,9 @@ const createButton = document.querySelector('.popup__create-button');
 const popupAddNode = document.querySelector('.popup_add-form');
 const popupEditNode = document.querySelector('.popup_edit-form');
 
+const addFormNode = document.querySelector('.popup__form_add-form');
+const editFormNode = document.querySelector('.popup__form_edit-form');
+
 const popupCloseButtonEditFormNode = document.querySelector('.popup__close-button_edit-form');
 const popupCloseButtonAddFormNode = document.querySelector('.popup__close-button_add-form');
 const popupPhotoCloseButtonNode = document.querySelector('.popup-photo__close-button');
@@ -54,8 +57,8 @@ const inputLink = document.querySelector('.popup__field_link');
 
 const forms = document.querySelectorAll(validationConfig.formSelector);
 
-const editForm = new FormValidator(forms[0], validationConfig);
-const addForm = new FormValidator(forms[1], validationConfig);
+const editForm = new FormValidator(editFormNode, validationConfig);
+const addForm = new FormValidator(addFormNode, validationConfig);
 
 //Добавление первых 6 карточек
 initialCards.forEach(item => {
@@ -99,15 +102,15 @@ editButtonNode.addEventListener('click', () => {
     openPopup(popupEditNode)
     fieldNameNode.value = profileNameNode.textContent;
     fieldAboutNode.value = profileTextNode.textContent;
-    editForm.setButtonState(saveButton, forms[0].checkValidity());
-    editForm.removeError(forms[0], editForm, validationConfig);
+    editForm.setButtonState(saveButton, editFormNode.checkValidity());
+    editForm.removeError(editFormNode, editForm, validationConfig);
 });
 
 addButtonNode.addEventListener('click', () => {
     openPopup(popupAddNode)
-    resetInput(forms[1]);
-    addForm.setButtonState(createButton, forms[1].checkValidity());
-    addForm.removeError(forms[1], addForm, validationConfig);
+    resetInput(addFormNode);
+    addForm.setButtonState(createButton, addFormNode.checkValidity());
+    addForm.removeError(addFormNode, addForm, validationConfig);
 });
 popupPhotoCloseButtonNode.addEventListener('click', () => closePopup(popupPhotoNode));
 popupCloseButtonEditFormNode.addEventListener('click', () => closePopup(popupEditNode));
