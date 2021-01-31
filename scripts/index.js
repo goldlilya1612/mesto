@@ -55,8 +55,6 @@ const fieldAboutNode = document.querySelector('.popup__field_about');
 const inputNameOfPicture = document.querySelector('.popup__field_name-of-picture');
 const inputLink = document.querySelector('.popup__field_link');
 
-const forms = document.querySelectorAll(validationConfig.formSelector);
-
 const editForm = new FormValidator(editFormNode, validationConfig);
 const addForm = new FormValidator(addFormNode, validationConfig);
 
