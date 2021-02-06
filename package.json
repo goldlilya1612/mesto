@@ -1,0 +1,25 @@
+{
+    "name": "mesto",
+    "version": "1.0.0",
+    "description": "**Figma**",
+    "main": "index.js",
+    "scripts": {
+        "build": "webpack --mode production",
+        "dev": "webpack serve"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/goldlilya1612/mesto.git"
+    },
+    "author": "",
+    "license": "ISC",
+    "bugs": {
+        "url": "https://github.com/goldlilya1612/mesto/issues"
+    },
+    "homepage": "https://github.com/goldlilya1612/mesto#readme",
+    "devDependencies": {
+        "dev-server": "^0.1.0",
+        "webpack": "^5.21.1",
+        "webpack-cli": "^4.5.0"
+    }
+}
