@@ -1,10 +1,11 @@
- import { openPopup, popupPhotoNode, image, heading } from './util.js';
+ //import { openPopup, popupPhotoNode, image, heading } from './util.js';
  export default class Card {
 
-     constructor(data, selector) {
+     constructor(data, { selector, handleCardClick }) {
          this._name = data.name;
          this._link = data.link;
          this._selector = selector;
+         this._handleCardClick = handleCardClick;
      };
 
      //Возвращаем разметку
@@ -13,15 +14,16 @@
              .querySelector(this._selector)
              .content.querySelector('.element')
              .cloneNode(true);
-
          return cardElement;
      };
+
 
      _setEventListeners() {
          this._element.querySelector('.element__remove-button').addEventListener('click', this._removeCard.bind(this));
          this._element.querySelector('.element__vector').addEventListener('click', this._likeCard);
-         this._element.querySelector('.element__image').addEventListener('click', () => this._openPhotoPopup());
-     };
+         this._element.querySelector('.element__image').addEventListener('click', () => this._handleCardClick({ name: this._name, link: this._link }));
+
+     }
 
      //Добавление в разметку данные
      generateCard() {
@@ -49,11 +51,4 @@
          targetElement.classList.toggle('element__vector_active');
      };
 
-     //Открытие попапа с картинкой
-     _openPhotoPopup() {
-         openPopup(popupPhotoNode);
-         image.src = this._link;
-         image.setAttribute("alt", this._name);
-         heading.textContent = this._name;
-     }
  }
