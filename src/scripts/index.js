@@ -25,6 +25,8 @@ import {
     editFormNode
 } from '../utils/constants.js';
 
+import '../pages/index.css';
+
 const editForm = new FormValidator(editFormNode, validationConfig);
 const addForm = new FormValidator(addFormNode, validationConfig);
 
