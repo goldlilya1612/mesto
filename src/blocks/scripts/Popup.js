@@ -1,7 +1,6 @@
 export default class Popup {
     constructor({ popupSelector }) {
         this._popupSelector = popupSelector;
-        //this._func = func;
     }
 
     //открытие попапа
@@ -33,8 +32,6 @@ export default class Popup {
     }
 
     setEventListeners() {
-        //document.querySelector(this._popupSelector).addEventListener('submit', this._func);
-
         const button = document
             .querySelector(this._popupSelector)
             .querySelector('.popup__close-button');
