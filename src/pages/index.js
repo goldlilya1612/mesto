@@ -7,12 +7,12 @@
 //класс PopupWithForm отвечает за попап с формой
 //класс UserInfo отвечает за управление отображением информации о пользователе на странице.
 
-import Card from './Card.js';
-import FormValidator from './FormValidator.js';
-import Section from './Section.js';
-import PopupWithImage from './PopupWithImage.js';
-import PopupWithForm from './PopupWithForm.js';
-import UserInfo from './UserInfo.js'
+import Card from '../components/Card.js';
+import FormValidator from '../components/FormValidator.js';
+import Section from '../components/Section.js';
+import PopupWithImage from '../components/PopupWithImage.js';
+import PopupWithForm from '../components/PopupWithForm.js';
+import UserInfo from '../components/UserInfo.js'
 import {
     validationConfig,
     initialCards,
@@ -22,8 +22,13 @@ import {
     saveButton,
     createButton,
     addFormNode,
-    editFormNode
+    editFormNode,
+    nameInput,
+    aboutInput
 } from '../utils/constants.js';
+
+import '../pages/index.css';
+
 
 const editForm = new FormValidator(editFormNode, validationConfig);
 const addForm = new FormValidator(addFormNode, validationConfig);
@@ -50,26 +55,27 @@ const popupImage = new PopupWithImage({
     popupSelector: '.popup-photo'
 });
 
+const info = new UserInfo({
+    userNameSelector: '.profile__name',
+    userInfoSelector: '.profile__text'
+});
 
 const popupAddNode = new PopupWithForm({
     popupSelector: '.popup_add-form',
     submitForm: (formValues) => {
         const nameOfPicture = formValues["name-of-picture"];
         const pictureLink = formValues["link"];
-        addNewCard(nameOfPicture, pictureLink);
-    },
+        cardList.items = { name: nameOfPicture, link: pictureLink };
+        addNewCard(cardList.items)
+    }
+
 });
 
 const popupEditNode = new PopupWithForm({
     popupSelector: '.popup_edit-form',
-    submitForm: (formValues) => {
-        info.setUserInfo(formValues);
+    submitForm: () => {
+        info.setUserInfo(nameInput, aboutInput);
     }
-});
-
-const info = new UserInfo({
-    userNameSelector: '.popup__field_name',
-    userInfoSelector: '.popup__field_about'
 });
 
 //рендер 6 карточек
@@ -84,27 +90,17 @@ function resetInput(form) {
     form.reset();
 }
 
-//добавление НОВОЙ карточки
-function addNewCard(nameOfPicture, pictureLink) {
-
-    const newCard = new Section({
-            items: [{ name: nameOfPicture, link: pictureLink }],
-            renderer: (item) => {
-                const card = new Card(item, {
-                    selector: '.template',
-                    handleCardClick: (item) => {
-                        popupImage.open(item);
-                    }
-                });
-                const cardElement = card.generateCard();
-                newCard.addNewItem(cardElement);
-            }
-        },
-        initialCardsContainerSelector
-    );
-    newCard.renderItems();
+//добавление новой карточки
+function addNewCard(item) {
+    const newCard = new Card(item, {
+        selector: '.template',
+        handleCardClick: () => {
+            popupImage.open(item);
+        }
+    });
+    const cardElement = newCard.generateCard();
+    cardList.addNewItem(cardElement);
 }
-
 
 popupImage.setEventListeners();
 popupAddNode.setEventListeners();
@@ -112,7 +108,9 @@ popupEditNode.setEventListeners();
 
 editButtonNode.addEventListener('click', () => {
     popupEditNode.open();
-    info.getUserInfo();
+    const userInfo = info.getUserInfo();
+    nameInput.value = userInfo.name;
+    aboutInput.value = userInfo["about-myself"];
     editForm.setButtonState(saveButton, editFormNode.checkValidity());
     editForm.removeError(editFormNode, editForm, validationConfig);
 });

@@ -1,7 +1,5 @@
 export {
     validationConfig,
-    profileNameNode,
-    profileTextNode,
     initialCards,
     initialCardsContainerSelector,
     editButtonNode,
@@ -9,8 +7,13 @@ export {
     saveButton,
     createButton,
     addFormNode,
-    editFormNode
+    editFormNode,
+    nameInput,
+    aboutInput
 }
+
+const nameInput = document.querySelector('.popup__field_name');
+const aboutInput = document.querySelector('.popup__field_about');
 
 const validationConfig = {
     formSelector: '.popup__form',
@@ -46,9 +49,6 @@ const initialCards = [{
         link: 'https://pictures.s3.yandex.net/frontend-developer/cards-compressed/baikal.jpg'
     }
 ];
-
-const profileNameNode = document.querySelector('.profile__name');
-const profileTextNode = document.querySelector('.profile__text');
 
 const initialCardsContainerSelector = '.elements';
 
