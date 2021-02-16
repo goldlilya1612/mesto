@@ -16,13 +16,16 @@
     <main class="content">
 
         <section class="profile">
-            <img class="profile__avatar" src="<%=require('./images/profile__avatar.jpg')%>" alt="Фото профиля">
+            <div class="profile__avatar-container">
+                <img class="profile__avatar" src="#" alt="Фото профиля">
+                <button calss="profile__avatar-button"></button>
+            </div>
             <div class="profile__info-wrapper">
                 <div class="profile__info-inner">
-                    <h1 class="profile__name">Жак-Ив Кусто</h1>
+                    <h1 class="profile__name"></h1>
                     <button class="profile__edit-button" type="button"></button>
                 </div>
-                <p class="profile__text">Исследователь океана</p>
+                <p class="profile__text"></p>
             </div>
             <button class="profile__add-button" type="button"></button>
         </section>
@@ -64,6 +67,14 @@
         </div>
     </div>
 
+    <div class="popup popup_delete-card">
+        <div class="popup__container popup__container_delete-card">
+            <h2 class="popup__heading popup__heading_delete-card">Вы уверены?</h2>
+            <button type="button" class="popup__close-button popup__close-button_delete-card"></button>
+            <button type="button" class="popup__button popup__yes-button">Да</button>
+        </div>
+    </div>
+
     <div class="popup popup-photo">
         <div class="popup-photo__container">
             <button type="button" class="popup__close-button popup-photo__close-button"></button>
@@ -74,11 +85,14 @@
 
     <template class="template">
         <div class="element">
-            <button class="element__remove-button"></button>
+            <button class="element__remove-button element__remove-button_invisible"></button>
             <img class="element__image" src="#" alt="#"> 
             <div class="element__wrapper">
                 <h2 class="element__text"></h2>
-                <button class="element__vector" type="button"></button>
+                <div class = "element__block-with-likes">
+                    <button class = "element__vector" type="button"></button>
+                    <p class = "element__number-of-likes"></p>
+                </div> 
             </div>
         </div>
     </template>

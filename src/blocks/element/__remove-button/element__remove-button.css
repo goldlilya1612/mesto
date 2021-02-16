@@ -13,3 +13,7 @@
     opacity: 0.6;
     cursor: pointer;
 }
+
+.element__remove-button_invisible {
+    display: none;
+}
