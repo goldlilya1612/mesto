@@ -20,12 +20,15 @@ import {
     initialCardsContainerSelector,
     editButtonNode,
     addButtonNode,
+    profileButtonNode,
     saveButton,
     createButton,
     addFormNode,
     editFormNode,
+    changeAvatarFormNode,
     nameInput,
-    aboutInput
+    aboutInput,
+    saveButtonOfAvatarPopup
 } from '../utils/constants.js';
 
 import '../pages/index.css';
@@ -82,6 +85,7 @@ initialCards.then((data) => {
 
 const editForm = new FormValidator(editFormNode, validationConfig);
 const addForm = new FormValidator(addFormNode, validationConfig);
+const changeAvatarForm = new FormValidator(changeAvatarFormNode, validationConfig);
 
 const popupImage = new PopupWithImage({
     popupSelector: '.popup-photo'
@@ -99,6 +103,7 @@ const popupAddNode = new PopupWithForm({
         const pictureLink = formValues["link"];
         initialCards
             .then(data => {
+                renderLoading(true, createButton);
                 data = { name: nameOfPicture, link: pictureLink };
                 api.addCard(data) //добавление карточки на сервер
                     .then((data) => {
@@ -115,8 +120,23 @@ const popupEditNode = new PopupWithForm({
     popupSelector: '.popup_edit-form',
     submitForm: (formValues) => {
         info.setUserInfo(nameInput, aboutInput);
+        renderLoading(true, saveButton);
         api.editInfo(formValues)
-            .catch(err => console.log(err));
+            .catch(err => console.log(err))
+            .finally(() => renderLoading(false, saveButton, 'Сохранить'))
+    }
+});
+
+const popupChangeAvatar = new PopupWithForm({
+    popupSelector: '.popup_change-avatar',
+    submitForm: (inputValues) => {
+        renderLoading(true, saveButtonOfAvatarPopup);
+        api.updateAvatar(inputValues.link)
+            .then(() => {
+                document.querySelector('.profile__avatar').src = inputValues.link;
+            })
+            .catch(err => console.log(err))
+            .finally(() => renderLoading(false, saveButtonOfAvatarPopup, 'Сохранить'))
     }
 });
 
@@ -127,6 +147,7 @@ const popupDeleteCard = new Popup({
 //проверка валидности форм
 editForm.enableValidation();
 addForm.enableValidation();
+changeAvatarForm.enableValidation()
 
 //очистка инпутов
 function resetInput(form) {
@@ -148,9 +169,25 @@ function addNewCard(item) {
     cardList.addNewItem(cardElement);
 }
 
+function renderLoading(isLoading, button, buttonText) {
+    if (isLoading) {
+        button.textContent = 'Сохранение...'
+    } else {
+
+        button.textContent = buttonText
+    }
+}
+
 popupImage.setEventListeners();
 popupAddNode.setEventListeners();
 popupEditNode.setEventListeners();
+popupChangeAvatar.setEventListeners();
+
+profileButtonNode.addEventListener('click', () => {
+    popupChangeAvatar.open();
+    changeAvatarForm.setButtonState(saveButtonOfAvatarPopup, changeAvatarFormNode.checkValidity());
+    changeAvatarForm.removeError(changeAvatarFormNode, changeAvatarForm, validationConfig);
+})
 
 
 editButtonNode.addEventListener('click', () => {

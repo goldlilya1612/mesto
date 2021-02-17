@@ -18,7 +18,7 @@
         <section class="profile">
             <div class="profile__avatar-container">
                 <img class="profile__avatar" src="#" alt="Фото профиля">
-                <button calss="profile__avatar-button"></button>
+                <button class="profile__avatar-button" type="button"></button>
             </div>
             <div class="profile__info-wrapper">
                 <div class="profile__info-inner">
@@ -29,7 +29,6 @@
             </div>
             <button class="profile__add-button" type="button"></button>
         </section>
-
 
         <section class="elements"></section>
 
@@ -63,6 +62,18 @@
                 <input type="url" id="link" class="popup__field popup__field_add-form popup__field_link" name="link" placeholder="Ссылка на картинку" required>
                 <span class="error" id="link-error"></span>
                 <button type="submit" class="popup__button popup__create-button">Создать</button>
+            </form>
+        </div>
+    </div>
+
+    <div class="popup popup_change-avatar">
+        <div class="popup__container popup__container_change-avatar">
+            <h2 class="popup__heading popup__heading_change-avatar">Обновить аватар</h2>
+            <button type="button" class="popup__close-button popup__close-button_change-avatar"></button>
+            <form class="popup__form popup__form_change-avatar" name="change-avatar">
+                <input type="url" id="link-of-avatar" class="popup__field popup__field_change-avatar popup__field_link" name="link" placeholder="Ссылка на картинку" required>
+                <span class="error" id="link-of-avatar-error"></span>
+                <button type="submit" class="popup__button popup__save-button">Сохранить</button>
             </form>
         </div>
     </div>
