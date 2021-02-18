@@ -108,6 +108,8 @@ const popupAddNode = new PopupWithForm({
                 api.addCard(data) //добавление карточки на сервер
                     .then((data) => {
                         addNewCard(data);
+                        popupAddNode.close();
+                        document.querySelector('.popup__form_add-form').reset();
                     })
                     .catch(err => console.log(err));
             })
@@ -119,9 +121,12 @@ const popupAddNode = new PopupWithForm({
 const popupEditNode = new PopupWithForm({
     popupSelector: '.popup_edit-form',
     submitForm: (formValues) => {
-        info.setUserInfo(nameInput, aboutInput);
         renderLoading(true, saveButton);
         api.editInfo(formValues)
+            .then(() => {
+                info.setUserInfo(nameInput, aboutInput);
+                popupEditNode.close();
+            })
             .catch(err => console.log(err))
             .finally(() => renderLoading(false, saveButton, 'Сохранить'))
     }
@@ -134,6 +139,7 @@ const popupChangeAvatar = new PopupWithForm({
         api.updateAvatar(inputValues.link)
             .then(() => {
                 document.querySelector('.profile__avatar').src = inputValues.link;
+                popupChangeAvatar.close();
             })
             .catch(err => console.log(err))
             .finally(() => renderLoading(false, saveButtonOfAvatarPopup, 'Сохранить'))
@@ -173,7 +179,6 @@ function renderLoading(isLoading, button, buttonText) {
     if (isLoading) {
         button.textContent = 'Сохранение...'
     } else {
-
         button.textContent = buttonText
     }
 }

@@ -1,20 +1,23 @@
 export default class Card {
 
     constructor(data, { selector, popupSelector, handleCardClick, api }, popupDeleteCard) {
+
         this._name = data.name;
         this._link = data.link;
         this._userId = data.owner._id;
         this._cardId = data._id;
-        this._selector = selector;
         this._likes = data.likes;
-        this._likesCounter = this._likes.length;
 
+        this._selector = selector;
+        this._api = api;
+        this._likesCounter = this._likes.length;
         this._popupSelector = popupSelector;
         this._handleCardClick = handleCardClick;
         this._popupDeleteCard = popupDeleteCard;
+
         this._popup = document.querySelector(this._popupSelector);
         this._button = this._popup.querySelector('.popup__button');
-        this._api = api;
+
     };
 
     //Возвращаем разметку
@@ -36,15 +39,14 @@ export default class Card {
     //Добавление в разметку данные
     generateCard() {
         this._element = this._getTemplate();
+        this._element.querySelector('.element__number-of-likes').textContent = this._likesCounter;
 
         this._api.getUserInfo()
             .then((data) => {
                 //цвет лайка при рендеринге
                 const dataString = JSON.stringify(data);
-
                 this._likes.forEach(item => {
                     const iteemString = JSON.stringify(item);
-
                     if (dataString == iteemString) {
                         this._element.querySelector('.element__vector').classList.add('element__vector_active');
                     }
@@ -59,10 +61,7 @@ export default class Card {
             })
             .catch(err => console.log(err));
 
-        this._element.querySelector('.element__number-of-likes').textContent = this._likesCounter;
-
         const image = this._element.querySelector('.element__image');
-
         this._element.querySelector('.element__text').textContent = this._name;
         image.src = this._link;
         image.setAttribute("alt", this._name);
@@ -86,53 +85,24 @@ export default class Card {
         });
     }
 
-    //Лайк карточки
     _likeCard(e) {
-        this._api.getUserInfo()
-            .then((data) => {
-
-                const dataString = JSON.stringify(data);
-                this._likes.forEach(item => {
-
-                    const iteemString = JSON.stringify(item);
-                    if (dataString != iteemString) {
-                        this._likesCounter++;
-                        this._api
-                            .addLike(this._cardId)
-                            .then(() => {
-                                const targetElement = e.target;
-                                this._element.querySelector('.element__number-of-likes').textContent = this._likesCounter;
-                                targetElement.classList.toggle('element__vector_active');
-                            })
-                    } else if (dataString == iteemString) {
-                        this._likesCounter--;
-                        this._api
-                            .removeLike(this._cardId)
-                            .then(() => {
-                                const targetElement = e.target;
-                                this._element.querySelector('.element__number-of-likes').textContent = this._likesCounter;
-                                targetElement.classList.toggle('element__vector_active');
-                            })
-                    }
-                });
-            })
-            .catch(err => console.log(err));
-
-
-
-
-
-        /*
-        else if (user._id == 'underfined') {
+        if (this._element.querySelector('.element__vector').classList.contains('element__vector_active')) {
             this._api.removeLike(this._cardId)
                 .then(() => {
-                    const targetElement = e.target;
                     this._likesCounter--;
                     this._element.querySelector('.element__number-of-likes').textContent = this._likesCounter;
+                    const targetElement = e.target;
                     targetElement.classList.toggle('element__vector_active');
                 })
-        } */
 
-        //.catch(err => console.log(err));
+        } else {
+            this._api.addLike(this._cardId)
+                .then(() => {
+                    this._likesCounter++;
+                    this._element.querySelector('.element__number-of-likes').textContent = this._likesCounter;
+                    const targetElement = e.target;
+                    targetElement.classList.toggle('element__vector_active');
+                })
+        }
     };
 }
