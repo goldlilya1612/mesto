@@ -94,6 +94,7 @@ export default class Card {
                     const targetElement = e.target;
                     targetElement.classList.toggle('element__vector_active');
                 })
+                .catch(err => console.log(err));
 
         } else {
             this._api.addLike(this._cardId)
@@ -103,6 +104,7 @@ export default class Card {
                     const targetElement = e.target;
                     targetElement.classList.toggle('element__vector_active');
                 })
+                .catch(err => console.log(err));
         }
     };
 }
