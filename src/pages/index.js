@@ -7,10 +7,15 @@
 //класс PopupWithForm отвечает за попап с формой
 //класс UserInfo отвечает за управление отображением информации о пользователе на странице.
 
+
+
+
+/* СПАСИБО ЗА КАЧЕСТВЕННОЕ РЕВЬЮ!*/
+
 import Card from '../components/Card.js';
 import FormValidator from '../components/FormValidator.js';
 import Section from '../components/Section.js';
-import Popup from '../components/Popup.js'
+import PopupWitQuestion from '../components/PopupWithQuestion.js'
 import PopupWithImage from '../components/PopupWithImage.js';
 import PopupWithForm from '../components/PopupWithForm.js';
 import UserInfo from '../components/UserInfo.js'
@@ -42,50 +47,20 @@ const api = new Api({
     }
 });
 
-//получение данных о пользователя из сервера
-const userInformation = api.getUserInfo();
-userInformation.then((data) => {
-        document.querySelector('.profile__name').textContent = data.name; //имя пользователя
-        document.querySelector('.profile__text').textContent = data.about; //информация о пользователе
-        document.querySelector('.profile__avatar').src = data.avatar; //картинка пользователя
-    })
-    .catch(err => console.log(err))
-
-//получение данных о карточках из сервера
-const initialCards = api.getInitialCards();
-initialCards.then((data) => {
-        const cardList = new Section({
-                items: data,
-                renderer: (item) => {
-                    const card = new Card(item, {
-                        selector: '.template',
-                        popupSelector: '.popup_delete-card',
-                        handleCardClick: (item) => {
-                            popupImage.open(item);
-                        },
-                        api: api
-                            //apiAddLike: addLike(id)
-                            //apiRemoveLike: removeLike(id)
-                    }, popupDeleteCard);
-                    const cardElement = card.generateCard();
-
-                    cardList.addItem(cardElement);
-                },
-            },
-            initialCardsContainerSelector
-        );
-
-        window.cardList = cardList;
-
-        //рендер карточек
-        cardList.renderItems();
-    })
-    .catch(err => console.log(err))
+let userId = null;
 
 
 const editForm = new FormValidator(editFormNode, validationConfig);
 const addForm = new FormValidator(addFormNode, validationConfig);
 const changeAvatarForm = new FormValidator(changeAvatarFormNode, validationConfig);
+
+const cardList = new Section({
+        renderer: (item) => {
+            cardList.addItem(createCard(item));
+        },
+    },
+    initialCardsContainerSelector
+);
 
 const popupImage = new PopupWithImage({
     popupSelector: '.popup-photo'
@@ -93,7 +68,8 @@ const popupImage = new PopupWithImage({
 
 const info = new UserInfo({
     userNameSelector: '.profile__name',
-    userInfoSelector: '.profile__text'
+    userInfoSelector: '.profile__text',
+    userAvatarSelector: '.profile__avatar'
 });
 
 const popupAddNode = new PopupWithForm({
@@ -101,21 +77,15 @@ const popupAddNode = new PopupWithForm({
     submitForm: (formValues) => {
         const nameOfPicture = formValues["name-of-picture"];
         const pictureLink = formValues["link"];
-        initialCards
-            .then(data => {
-                renderLoading(true, createButton);
-                data = { name: nameOfPicture, link: pictureLink };
-                api.addCard(data) //добавление карточки на сервер
-                    .then((data) => {
-                        addNewCard(data);
-                        popupAddNode.close();
-                        document.querySelector('.popup__form_add-form').reset();
-                    })
-                    .catch(err => console.log(err));
+        renderLoading(true, createButton);
+        const data = { name: nameOfPicture, link: pictureLink };
+        api.addCard(data) //добавление карточки на сервер
+            .then((data) => {
+                cardList.addNewItem(createCard(data));
+                popupAddNode.close();
             })
             .catch(err => console.log(err));
     }
-
 });
 
 const popupEditNode = new PopupWithForm({
@@ -123,8 +93,8 @@ const popupEditNode = new PopupWithForm({
     submitForm: (formValues) => {
         renderLoading(true, saveButton);
         api.editInfo(formValues)
-            .then(() => {
-                info.setUserInfo(nameInput, aboutInput);
+            .then((userData) => {
+                info.setUserInfo(userData);
                 popupEditNode.close();
             })
             .catch(err => console.log(err))
@@ -137,8 +107,8 @@ const popupChangeAvatar = new PopupWithForm({
     submitForm: (inputValues) => {
         renderLoading(true, saveButtonOfAvatarPopup);
         api.updateAvatar(inputValues.link)
-            .then(() => {
-                document.querySelector('.profile__avatar').src = inputValues.link;
+            .then((userData) => {
+                info.setUserInfo(userData);
                 popupChangeAvatar.close();
             })
             .catch(err => console.log(err))
@@ -146,7 +116,7 @@ const popupChangeAvatar = new PopupWithForm({
     }
 });
 
-const popupDeleteCard = new Popup({
+const popupDeleteCard = new PopupWitQuestion({
     popupSelector: '.popup_delete-card'
 });
 
@@ -155,26 +125,26 @@ editForm.enableValidation();
 addForm.enableValidation();
 changeAvatarForm.enableValidation()
 
-//очистка инпутов
-function resetInput(form) {
-    form.reset();
-}
 
-//добавление новой карточки
-function addNewCard(item) {
-    const newCard = new Card(item, {
+//создание карточки
+function createCard(item) {
+    const card = new Card(item, {
         selector: '.template',
-        popupSelector: '.popup_delete-card',
         handleCardClick: () => {
             popupImage.open(item);
         },
+        removeHandler: () => {
+            popupDeleteCard.setEventListeners(deleteCard(card));
+            popupDeleteCard.open();
+        },
         api: api
-    }, popupDeleteCard);
-    const cardElement = newCard.generateCard();
+    }, userId);
+    const cardElement = card.generateCard();
 
-    cardList.addNewItem(cardElement);
+    return cardElement
 }
 
+//Кнопка 'Сохранение...' во время выполнения запроса
 function renderLoading(isLoading, button, buttonText) {
     if (isLoading) {
         button.textContent = 'Сохранение...'
@@ -183,30 +153,50 @@ function renderLoading(isLoading, button, buttonText) {
     }
 }
 
+const deleteCard = (card) => {
+    return () => {
+        api.removeCard(card._cardId)
+            .then(() => {
+                popupDeleteCard.close();
+                card.removeCard();
+            })
+
+    }
+}
+
+//получение данных о пользователе и карточках из сервера
+Promise.all([api.getUserInfo(), api.getInitialCards()])
+    .then(values => {
+        const [userData, cardsData] = values;
+        info.setUserInfo(userData);
+        userId = userData._id;
+        cardList.renderItems(cardsData);
+    });
+
+
 popupImage.setEventListeners();
 popupAddNode.setEventListeners();
 popupEditNode.setEventListeners();
 popupChangeAvatar.setEventListeners();
+popupDeleteCard.setEventListeners();
 
 profileButtonNode.addEventListener('click', () => {
     popupChangeAvatar.open();
-    changeAvatarForm.setButtonState(saveButtonOfAvatarPopup, changeAvatarFormNode.checkValidity());
-    changeAvatarForm.removeError(changeAvatarFormNode, changeAvatarForm, validationConfig);
+    changeAvatarForm.setButtonState(changeAvatarFormNode.checkValidity());
+    changeAvatarForm.removeError();
 })
-
 
 editButtonNode.addEventListener('click', () => {
     popupEditNode.open();
     const userInfo = info.getUserInfo();
     nameInput.value = userInfo.name;
     aboutInput.value = userInfo["about-myself"];
-    editForm.setButtonState(saveButton, editFormNode.checkValidity());
-    editForm.removeError(editFormNode, editForm, validationConfig);
+    editForm.setButtonState(editFormNode.checkValidity());
+    editForm.removeError();
 });
 
 addButtonNode.addEventListener('click', () => {
     popupAddNode.open();
-    resetInput(addFormNode);
-    addForm.setButtonState(createButton, addFormNode.checkValidity());
-    addForm.removeError(addFormNode, addForm, validationConfig);
+    addForm.setButtonState(addFormNode.checkValidity());
+    addForm.removeError();
 });

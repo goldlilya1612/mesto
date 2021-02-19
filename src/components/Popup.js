@@ -2,22 +2,22 @@ export default class Popup {
     constructor({ popupSelector }) {
         this._popupSelector = popupSelector;
         this._popup = document.querySelector(this._popupSelector);
-        this._form = this._popup.querySelector('.popup__form');
-        this._button = this._popup.querySelector('.popup__button');
+        this._handleEscClose = this._handleEscClose.bind(this);
+        this._handleOverlayClose = this._handleOverlayClose.bind(this)
     }
 
     //открытие попапа
     open() {
         this._popup.classList.add('popup_opened');
-        document.addEventListener('keydown', (evt) => this._handleEscClose(evt));
-        document.addEventListener('mousedown', (evt) => this._handleOverlayClose(evt));
+        document.addEventListener('keydown', this._handleEscClose);
+        this._popup.addEventListener('mousedown', this._handleOverlayClose);
     }
 
     //закрытие попапа
     close() {
-        document.querySelector(this._popupSelector).classList.remove('popup_opened');
-        document.removeEventListener('keydown', (evt) => this._handleEscClose(evt));
-        document.removeEventListener('mousedown', (evt) => this._handleOverlayClose(evt));
+        this._popup.classList.remove('popup_opened');
+        document.removeEventListener('keydown', this._handleEscClose);
+        this._popup.removeEventListener('mousedown', this._handleOverlayClose);
     }
 
     // Закрытие на кнопку esc
@@ -35,9 +35,7 @@ export default class Popup {
     }
 
     setEventListeners() {
-        const button = document
-            .querySelector(this._popupSelector)
-            .querySelector('.popup__close-button');
+        const button = this._popup.querySelector('.popup__close-button');
 
         //Закрытие на "крестик"
         button.addEventListener('click', () => this.close());

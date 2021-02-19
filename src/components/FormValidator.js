@@ -7,6 +7,9 @@ export default class FormValidator {
         this._inputErrorClass = config.inputErrorClass;
         this._errorClass = config.errorClass;
         this._form = form;
+
+        this._inputList = this._form.querySelectorAll(this._inputSelector);
+        this._button = this._form.querySelector(this._submitButtonSelector);
     }
 
     //проверка валидности формы
@@ -15,13 +18,10 @@ export default class FormValidator {
     }
 
     _setEventListeners() {
-        const inputList = this._form.querySelectorAll(this._inputSelector);
-        const buttonNode = this._form.querySelector(this._submitButtonSelector);
-
-        inputList.forEach(input => {
+        this._inputList.forEach(input => {
             input.addEventListener('input', () => {
-                this._checkInputValidity(this._form, input, this);
-                this.setButtonState(buttonNode, this._form.checkValidity());
+                this._checkInputValidity(input);
+                this.setButtonState(this._form.checkValidity());
             })
         });
 
@@ -31,43 +31,42 @@ export default class FormValidator {
     }
 
     //проверка валидности полей
-    _checkInputValidity(form, input, config) {
+    _checkInputValidity(input) {
         if (input.validity.valid) {
-            this._hideError(form, input, config);
+            this._hideError(input);
         } else {
-            this._showError(form, input, config);
+            this._showError(input);
         }
     }
 
     // отображение ошибки
-    _showError(form, input, config) {
-        const error = form.querySelector(`#${input.id}-error`);
+    _showError(input) {
+        const error = this._form.querySelector(`#${input.id}-error`);
         error.textContent = input.validationMessage;
-        input.classList.add(config.inputErrorClass);
+        input.classList.add(this._inputErrorClass);
     }
 
     // скрытие ошибки
-    _hideError(form, input, config) {
-        const error = form.querySelector(`#${input.id}-error`);
+    _hideError(input) {
+        const error = this._form.querySelector(`#${input.id}-error`);
         error.textContent = "";
-        input.classList.remove(config.inputErrorClass);
+        input.classList.remove(this._inputErrorClass);
     }
 
     //блокировка-разблокировка кнопки
-    setButtonState(button, isActive) {
+    setButtonState(isActive) {
         if (isActive) {
-            button.classList.remove(this._inactiveButtonClass);
-            button.disabled = false;
+            this._button.classList.remove(this._inactiveButtonClass);
+            this._button.disabled = false;
         } else {
-            button.classList.add(this._inactiveButtonClass);
-            button.disabled = true;
+            this._button.classList.add(this._inactiveButtonClass);
+            this._button.disabled = true;
         }
     }
 
-    removeError(formElement, form, config) {
-        const inputList = formElement.querySelectorAll(config.inputSelector);
-        inputList.forEach(input => {
-            form._hideError(formElement, input, config);
+    removeError() {
+        this._inputList.forEach(input => {
+            this._hideError(input);
         });
     }
 
