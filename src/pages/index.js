@@ -160,7 +160,7 @@ const deleteCard = (card) => {
                 popupDeleteCard.close();
                 card.removeCard();
             })
-
+            .catch(err => console.log(err))
     }
 }
 
@@ -171,7 +171,8 @@ Promise.all([api.getUserInfo(), api.getInitialCards()])
         info.setUserInfo(userData);
         userId = userData._id;
         cardList.renderItems(cardsData);
-    });
+    })
+    .catch(err => console.log(err));
 
 
 popupImage.setEventListeners();
